@@ -2,14 +2,7 @@
 
 ## 1. Migration Approaches
 
-### A. Incremental Migration
-- **Micro-Frontend Architecture**
-  - Run both Angular and React applications simultaneously
-  - Gradually migrate components from Angular to React
-  - Use Module Federation or custom integration approaches
-  - Benefits: Lower risk, continuous delivery
-
-### B. Compatibility Tools
+### A. Compatibility Tools
 - **react2angular**
   - Embeds React components within Angular applications
   - Useful for gradual component migration
@@ -50,7 +43,7 @@
   - Simple API
   - Less boilerplate than Redux
 
-## 3. Framework Selection
+## 3. React Framework Selection
 
 ### A. Vite
 - Best for:
