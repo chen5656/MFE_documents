@@ -1,5 +1,4 @@
-# Angular to React Migration Strategy
-
+# Angular to React
 ## 1. Migration Approaches
 
 ### A. Compatibility Tools
