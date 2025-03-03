@@ -3,7 +3,7 @@
 ## 1. Migration Approaches
 
 ### A. Compatibility Tools
-- **react2angular**
+- ~~**react2angular**
   - Embeds React components within Angular applications
   - Useful for gradual component migration
   - Handles props and events passing
