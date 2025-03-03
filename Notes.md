@@ -1,4 +1,4 @@
-# Angular to React Migration Strategy
+# Angular to React
 
 ## 1. Migration Approaches
 
@@ -17,6 +17,17 @@
   - Runs React components within Angular
   - Alternative to react2angular
   - Good for testing React components in Angular context
+
+- **microsoft/angular-react**
+  - [Official Microsoft Solution](https://github.com/microsoft/angular-react)
+  - Renders React components in Angular applications
+
+- **ngimport**
+  - [ngimport](https://github.com/bcherny/ngimport)
+  - Import Angular services into non-Angular code
+  - Useful for accessing Angular services in React
+  - Enables gradual migration of service dependencies
+  - Helps maintain functionality during transition
 
 ## 2. State Management Migration
 
