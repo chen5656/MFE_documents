@@ -130,6 +130,9 @@
 
 ### B. Shared Data Management
 - Options:
+  - messageChannel:
+    https://developer.mozilla.org/en-US/docs/Web/API/MessageChannel
+    The MessageChannel interface of the Channel Messaging API allows us to create a new message channel and send data through it via its two MessagePort properties.
   - Shared state management store
   - Browser storage (localStorage/sessionStorage)
   - GraphQL Solutions
