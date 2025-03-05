@@ -95,6 +95,30 @@
       - Performance overhead
       - Limited to component-level integration
 
+- **Web Components**
+    - Native browser-supported custom elements
+    - Pros:
+      - Framework-agnostic
+      - Native browser support
+      - True encapsulation via Shadow DOM
+      - Reusable across any framework
+      - Standardized specification
+    - Cons:
+      - Limited browser support for some features
+      - More complex state management
+      - Need polyfills for older browsers
+      - Performance can be affected by Shadow DOM
+      - Limited framework-specific features
+    - Implementation Options:
+      - Pure Web Components
+      - Lit (Google's library)
+      - Stencil (Ionic's compiler)
+    - Best for:
+      - Framework-agnostic components
+      - Long-term maintainable components
+      - Design system implementations
+      - Shared component libraries
+
 - **Module Federation (Webpack 5)**
     - Runtime integration of independently deployed applications
     - Pros:
