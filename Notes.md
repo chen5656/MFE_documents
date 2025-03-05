@@ -119,11 +119,11 @@
       - Design system implementations
       - Shared component libraries
 
-- **Module Federation (Webpack 5)**
+- **Module Federation**
     - Runtime integration of independently deployed applications
     - Framework-agnostic solution (works with Angular, React, Vue, etc.)
     - Implementation Options:
-      1. **Webpack Module Federation (Classic)**
+      1. **Webpack Module Federation (Webpack)**
         - Traditional webpack setup
         - Good:
           - Well-documented
@@ -193,7 +193,6 @@
       - SEO challenges
 
 ### B. Shared Data Management
-- Options:
   - messageChannel:
     https://developer.mozilla.org/en-US/docs/Web/API/MessageChannel
     The MessageChannel interface of the Channel Messaging API allows us to create a new message channel and send data through it via its two MessagePort properties.
