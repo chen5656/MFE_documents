@@ -1,75 +1,128 @@
-Webpack 5 introduces the powerful feature of Module Federation, which allows multiple independently built JavaScript applications to share modules and resources with each other. This mechanism makes the micro-frontend architecture more feasible, enabling developers to manage and integrate different front-end applications more flexibly.
+# Module Federation in Vite
 
-### How to Share Resources in Webpack 5:
+Vite supports Module Federation through the `@originjs/vite-plugin-federation` plugin, enabling multiple independently built JavaScript applications to share modules and resources. This mechanism makes micro-frontend architecture more feasible, allowing developers to manage and integrate different front-end applications flexibly.
 
-1. **Define Module Federation**:
-   Use the `ModuleFederationPlugin` in the Webpack configuration file to configure shared modules. Each application needs to declare which modules it exposes and which remote modules it wants to use.
+### How to Share Resources in Vite:
 
-   ```javascript
-   // In the webpack.config.js of Application A
-   const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+1. **Configure Module Federation**:
+   Use the `@originjs/vite-plugin-federation` plugin in the Vite configuration file to configure shared modules. Each application needs to declare which modules it exposes and which remote modules it wants to use.
 
-   module.exports = {
-       // Other configurations
-       plugins: [
-           new ModuleFederationPlugin({
-               name: "appA", // The name of the current application
-               filename: "remoteEntry.js", // The remote entry file
-               exposes: { // Exposed modules
-                   './Component': './src/Component',
-               },
-               shared: { // Shared dependencies
-                   react: { singleton: true, requiredVersion: '^17.0.2' },
-                   "react-dom": { singleton: true, requiredVersion: '^17.0.2' },
-               },
-           }),
-       ],
-   };
+   ```typescript
+   // remote-react-app/vite.config.ts (Remote React Application)
+   import { defineConfig } from 'vite'
+   import react from '@vitejs/plugin-react'
+   import federation from '@originjs/vite-plugin-federation'
+
+   export default defineConfig({
+     plugins: [
+       react(),
+       federation({
+         name: 'remote-react-app',
+         filename: 'remoteEntry.js',
+         exposes: {
+           './CsvViewer': './src/components/CsvViewer.tsx',
+         },
+         shared: ['react', 'react-dom'],
+       }),
+     ],
+     build: {
+       modulePreload: false,
+       target: 'esnext',
+       minify: false,
+       cssCodeSplit: false,
+     },
+     server: {
+       port: 5001,
+     },
+     preview: {
+       port: 5001
+     }
+   })
    ```
 
-   ```javascript
-   // In the webpack.config.js of Application B
-   const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+   ```typescript
+   // main-app/vite.config.ts (Host Application)
+    import { defineConfig } from 'vite'
+    import react from '@vitejs/plugin-react'
+    import federation from '@originjs/vite-plugin-federation'
 
-   module.exports = {
-       // Other configurations
-       plugins: [
-           new ModuleFederationPlugin({
-               name: "appB",
-               remotes: {
-                   appA: "appA@http://localhost:3001/remoteEntry.js", // Pointing to Application A's location
-               },
-               shared: {
-                   react: { singleton: true, requiredVersion: '^17.0.2' },
-                   "react-dom": { singleton: true, requiredVersion: '^17.0.2' },
-               },
-           }),
-       ],
-   };
-   ```
+    export default defineConfig({
+    plugins: [
+        react(),
+        federation({
+        name: 'main-app',
+        remotes: {
+            'remote-angular-app': 'http://localhost:4200/remoteEntry.js',
+            'remote-react-app': 'http://localhost:5001/assets/remoteEntry.js',
+        },
+        shared: ['react', 'react-dom'],
+        }),
+    ],
+    build: {
+        modulePreload: false,
+        target: 'esnext',
+        minify: false,
+        cssCodeSplit: false,
+    },
+    server: {
+        port: 5000,
+        cors: true,
+        hmr: {
+        clientPort: 5000,
+        host: 'localhost',
+        },
+    },
+    })
+    ```
 
-2. **Using Shared Modules**:
-   In Application B, the exposed module from Application A can be imported and used directly.
+2. Using Remote Modules :
+In the host application, you can import and use the exposed modules from remote applications directly.
+    ```typescript
+    // main-app/src/App.tsx
+    import { lazy, Suspense } from 'react'
+    import './App.css'
+    import TabView from './components/TabView.tsx'
+    import { wrapAngularComponent } from './utils/wrapAngularComponent'
 
-   ```javascript
-   // In a file of Application B
-   import React from 'react';
-   const RemoteComponent = React.lazy(() => import('appA/Component'));
+    // Lazy load the remote components
+    const RemoteReactCsvViewer = lazy(() => import('remote-react-app/CsvViewer'));
+    const RemoteAngularCsvViewer = wrapAngularComponent(() => import('remote-angular-app/CsvViewerComponent'));
 
-   const App = () => (
-       <React.Suspense fallback={<div>Loading...</div>}>
-           <RemoteComponent />
-       </React.Suspense>
-   );
-   ```
+    function App() {
+    return (
+        <div className="app-container">
+        <Suspense fallback={<div>Loading React Component...</div>}>
+            <RemoteReactCsvViewer />
+        </Suspense>
+        <Suspense fallback={<div>Loading Angular Component...</div>}>
+            <RemoteAngularCsvViewer />
+        </Suspense>
+        </div>
+    )
+    }
+    ```
 
-3. **Run Multiple Applications**:
-   Ensure that the applications are running on different ports. For example, Application A on `localhost:3001` and Application B on `localhost:3002`. This way, Application B can successfully load resources from Application A.
+3. Run Multiple Applications :
+Ensure that the applications are running on different ports:
 
-### Advantages:
-- **Resource Savings**: Avoid loading the same modules multiple times, reducing the overall resource size.
-- **Independence**: Different teams can develop and deploy their applications independently.
-- **Flexibility**: Allows dynamically loading dependencies at runtime based on need, enhancing loading speed and user experience.
+- Host Application: localhost:5000
+- Remote React App: localhost:5001
+- Remote Angular App: localhost:4200
 
-With this approach, Webpack 5’s Module Federation feature makes resource sharing simple and efficient, supporting more complex micro-frontend architectures.
+### Key Features and Benefits:
+1. Cross-Framework Integration :
+   
+   - Seamlessly integrate components from different frameworks (React, Angular, etc.)
+   - Share state and events between different framework components
+2. Build Optimization :
+   
+   - Shared dependencies to avoid duplicate loading
+   - Independent deployment capabilities
+   - Optimized build configuration for module federation
+3. Development Experience :
+   
+   - Hot Module Replacement (HMR) support
+   - Independent development and testing
+   - Flexible component sharing and reuse
 
+This implementation demonstrates how Vite's Module Federation feature enables efficient resource sharing and supports complex micro-frontend architectures while maintaining good development experience and build optimization.
